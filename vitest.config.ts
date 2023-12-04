@@ -6,15 +6,15 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/setupTests.ts',
+    setupFiles: './client/src/setupTests.ts',
     coverage: {
       all: true,
       enabled: true,
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './tests/unit/coverage',
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/test/', 'src/**/types.ts', 'vite-env.d.ts'],
+      include: ['client/src/**/*.{ts,tsx}'],
+      exclude: ['client/src/test/', '**/types.ts', 'vite-env.d.ts'],
     },
   },
 });

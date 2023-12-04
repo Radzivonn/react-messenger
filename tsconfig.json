@@ -19,7 +19,7 @@
     "types": ["vitest/globals", "@testing-library/react", "@testing-library/jest-dom"],
     "incremental": true
   },
-  "include": ["src", "vite.config.ts"],
+  "include": ["client/src", "server", "vite.config.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"
