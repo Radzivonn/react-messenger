@@ -1,18 +1,60 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
-  ],
+  env: { browser: true, es2020: true, node: true },
+  extends: ['plugin:react/recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
+  plugins: ['react', 'react-refresh', '@typescript-eslint', 'prettier', 'react-hooks'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    'linebreak-style': 'off',
+    '@typescript-eslint/indent': 'off',
+    'no-debugger': 'off',
+    'no-console': 'off',
+    'class-methods-use-this': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-var-requires': 'off',
+    'import/no-unresolved': 'off',
+    'lines-between-class-members': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/no-floating-promises': 'warn',
+    '@typescript-eslint/return-await': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/no-confusing-void-expression': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': [
+      'error',
+      {
+        ignoreMixedLogicalExpressions: true,
+      },
+    ],
+    'react/display-name': 'off',
+    'react/jsx-no-target-blank': 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    'require-jsdoc': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
     ],
   },
-}
+  settings: {
+    react: {
+      pragma: 'React',
+      version: 'detect',
+    },
+  },
+};
