@@ -1,4 +1,3 @@
-/// <reference path="../../common_types/types.d.ts" />
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
