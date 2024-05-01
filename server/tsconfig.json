@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "NodeNext",
+    "lib": ["ES6"],
+    "rootDir": "./src",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./src/**/*", "../common_types/types.d.ts"],
+  "exclude": ["node_modules"],
+  "lib": ["ESNext"],
+  "ts-node": {
+    "esm": true
+  }
+}
