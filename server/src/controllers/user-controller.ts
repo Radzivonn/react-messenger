@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { IUpdateUserDataBody, IUserController } from './types.js';
+import { IFriendListHandlerReqBody, IUpdateUserHandlerReqBody, IUserController } from './types.js';
 import { IUser } from '../types/types.js';
 import { userService } from '../service/user-service.js';
 import { ApiError } from '../exceptions/api-error.js';
@@ -39,7 +39,7 @@ class UserController implements IUserController {
 
   logout: RequestHandler = async (req, res, next) => {
     try {
-      const { refreshToken } = req.cookies;
+      const { refreshToken } = req.cookies; // TODO typing refreshToken
       const isLoggedOut = await userService.logout(refreshToken);
       if (isLoggedOut) {
         res.clearCookie('refreshToken');
@@ -53,8 +53,8 @@ class UserController implements IUserController {
 
   refresh: RequestHandler = async (req, res, next) => {
     try {
-      const { refreshToken } = req.cookies;
-      const user = await userService.refresh(refreshToken); // ! need to type any
+      const { refreshToken } = req.cookies; // TODO typing refreshToken
+      const user = await userService.refresh(refreshToken);
       res.cookie('refreshToken', user.refreshToken, { maxAge: 5 * 60 * 1000, httpOnly: true }); // ? 5 minutes
       return res.json(user);
     } catch (e) {
@@ -62,7 +62,7 @@ class UserController implements IUserController {
     }
   };
 
-  update: RequestHandler<{}, any, IUpdateUserDataBody> = async (req, res, next) => {
+  update: RequestHandler<{}, any, IUpdateUserHandlerReqBody> = async (req, res, next) => {
     try {
       const { email, password } = req.body.oldData;
       const { name: newName, email: newEmail, password: newPassword } = req.body.newData;
@@ -81,6 +81,26 @@ class UserController implements IUserController {
       await userService.remove(email, password);
       res.clearCookie('refreshToken');
       return res.status(204).json();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  addFriend: RequestHandler<{}, any, IFriendListHandlerReqBody> = async (req, res, next) => {
+    try {
+      const { userId, friendId } = req.body;
+      const friends = await userService.addFriend(userId, friendId);
+      return res.json(friends);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  removeFriend: RequestHandler<{}, any, IFriendListHandlerReqBody> = async (req, res, next) => {
+    try {
+      const { userId, friendId } = req.body;
+      const friends = await userService.removeFriend(userId, friendId);
+      return res.json(friends);
     } catch (e) {
       next(e);
     }

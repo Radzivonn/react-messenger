@@ -15,5 +15,7 @@ userRouter.post('/logout', userController.logout);
 userRouter.get('/refresh', userController.refresh);
 userRouter.put('/update', authMiddleware, userController.update);
 userRouter.delete('/remove', authMiddleware, userController.remove);
+userRouter.post('/addFriend', authMiddleware, userController.addFriend);
+userRouter.delete('/removeFriend', authMiddleware, userController.removeFriend);
 
 export default userRouter;
