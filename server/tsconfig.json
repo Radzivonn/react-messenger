@@ -12,7 +12,7 @@
     "noImplicitAny": true,
     "resolveJsonModule": true
   },
-  "include": ["./src/**/*", "../common_types/types.d.ts"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules"],
   "lib": ["ESNext"],
   "ts-node": {
