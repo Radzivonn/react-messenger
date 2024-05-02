@@ -12,14 +12,14 @@ export interface IUserDTO {
   role: string;
 }
 
-export interface IUser extends IUserDTO {
-  password: string;
-}
-
 export interface IUserAuthResponse {
   user: IUserDTO;
   accessToken: string;
   refreshToken: string;
+}
+
+export interface IUser extends IUserDTO {
+  password: string;
 }
 
 export interface IUserModel
@@ -33,7 +33,18 @@ export interface IUserToken {
 
 export interface IUserTokenModel
   extends Model<InferAttributes<IUserTokenModel>, InferCreationAttributes<IUserTokenModel>>,
-    IUserToken {} // ??? userId field
+    IUserToken {}
+
+export type FriendsList = string[];
+
+export interface IUserFriends {
+  userId: string;
+  friendsList: FriendsList; // array of users' UUIDs
+}
+
+export interface IUserFriendsModel
+  extends Model<InferAttributes<IUserFriendsModel>, InferCreationAttributes<IUserFriendsModel>>,
+    IUserFriends {}
 
 export interface ITokens {
   accessToken: string;
