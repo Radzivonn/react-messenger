@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: '*' }));
-app.use('/auth', userRouter);
+app.use('/user', userRouter);
 app.use(errorMiddleware);
 
 const httpServer = createServer(app);
