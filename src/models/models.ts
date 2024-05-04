@@ -1,10 +1,10 @@
 import { sequelize } from '../db/dbConfig.js';
 import { DataTypes } from 'sequelize';
-import { IUserModel, IUserTokenModel } from '../types/types.js';
+import { IUserFriendsModel, IUserModel, IUserTokenModel } from '../types/types.js';
 
 const User = sequelize.define<IUserModel>('user', {
   id: {
-    type: DataTypes.UUID, // ???
+    type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     autoIncrement: false,
@@ -17,14 +17,26 @@ const User = sequelize.define<IUserModel>('user', {
 
 const Token = sequelize.define<IUserTokenModel>('token', {
   userId: {
-    type: DataTypes.UUID, // ???
+    type: DataTypes.UUID,
     primaryKey: true,
     autoIncrement: false,
   },
   refreshToken: { type: DataTypes.TEXT },
 });
 
+const Friends = sequelize.define<IUserFriendsModel>('friends', {
+  userId: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    autoIncrement: false,
+  },
+  friendsList: { type: DataTypes.ARRAY(DataTypes.UUID) },
+});
+
 User.hasOne(Token, { onDelete: 'CASCADE' });
 Token.belongsTo(User, { foreignKey: 'userId' });
 
-export { User, Token };
+User.hasOne(Friends, { onDelete: 'CASCADE' });
+Friends.belongsTo(User, { foreignKey: 'userId' });
+
+export { User, Token, Friends };

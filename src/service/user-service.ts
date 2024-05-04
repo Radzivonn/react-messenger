@@ -4,7 +4,7 @@ import { IUserAuthResponse } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
-import { User } from '../models/models.js';
+import { Friends, User } from '../models/models.js';
 
 class UserService {
   registration = async (
@@ -146,6 +146,42 @@ class UserService {
     }
 
     await user.destroy();
+  };
+
+  addFriend = async (userId: string, friendId: string) => {
+    if (userId === friendId) {
+      throw ApiError.BadRequest("You can't add yourself as a friend");
+    }
+
+    const userFriend = await User.findOne({ where: { id: friendId } });
+
+    if (!userFriend) {
+      throw ApiError.NotFoundError('This User was not found');
+    }
+
+    const friends = await Friends.findOne({ where: { userId } });
+
+    if (friends) {
+      if (friends.friendsList.find((id) => id === friendId)) {
+        throw ApiError.BadRequest('This user is already in friend list');
+      }
+
+      return (await friends.update({ friendsList: [...friends.friendsList, friendId] }))
+        .friendsList;
+    }
+
+    return (await Friends.create({ userId, friendsList: [friendId] })).friendsList;
+  };
+
+  removeFriend = async (userId: string, friendId: string) => {
+    const friends = await Friends.findOne({ where: { userId } });
+
+    if (!friends || (friends && !friends.friendsList.length)) {
+      throw ApiError.BadRequest("This user's friends list is empty");
+    }
+
+    const newFriendsList = friends.friendsList.filter((id) => id !== friendId);
+    return (await friends.update({ friendsList: newFriendsList })).friendsList;
   };
 }
 

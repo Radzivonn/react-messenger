@@ -13,8 +13,8 @@ class TokenService {
       throw new Error('JWT secret does not exist');
     }
 
-    const accessToken = sign(payload, JWT_ACCESS_SECRET, { expiresIn: '30s' });
-    const refreshToken = sign(payload, JWT_REFRESH_SECRET, { expiresIn: '2m' });
+    const accessToken = sign(payload, JWT_ACCESS_SECRET, { expiresIn: '2m' });
+    const refreshToken = sign(payload, JWT_REFRESH_SECRET, { expiresIn: '3m' });
     return {
       accessToken,
       refreshToken,
