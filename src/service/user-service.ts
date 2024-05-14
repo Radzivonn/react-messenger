@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
-import { IUserAuthResponse } from '../types/types.js';
+import { IUserAuthResponse, IUserModel } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
@@ -182,6 +182,23 @@ class UserService {
 
     const newFriendsList = friends.friendsList.filter((id) => id !== friendId);
     return (await friends.update({ friendsList: newFriendsList })).friendsList;
+  };
+
+  getFriends = async (userId: string) => {
+    const friends = await Friends.findOne({ where: { userId } });
+
+    if (!friends || (friends && !friends.friendsList.length)) {
+      throw ApiError.BadRequest("This user's friends list is empty");
+    }
+
+    const friendsDataPromises = friends.friendsList.map((id) => User.findOne({ where: { id } }));
+
+    const friendsData = (await Promise.allSettled(friendsDataPromises)).filter(
+      (res) => res.status === 'fulfilled' && res.value != null,
+    ) as PromiseFulfilledResult<IUserModel>[];
+
+    /* The returned array includes only data from successfully resolved promises in userDTO format */
+    return friendsData.map((res) => new UserDto(res.value));
   };
 }
 

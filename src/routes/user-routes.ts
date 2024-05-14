@@ -17,5 +17,6 @@ userRouter.put('/update', authMiddleware, userController.update);
 userRouter.delete('/remove', authMiddleware, userController.remove);
 userRouter.post('/addFriend', authMiddleware, userController.addFriend);
 userRouter.delete('/removeFriend', authMiddleware, userController.removeFriend);
+userRouter.get('/friendList/:id', authMiddleware, userController.getFriends);
 
 export default userRouter;

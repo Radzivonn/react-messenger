@@ -105,6 +105,16 @@ class UserController implements IUserController {
       next(e);
     }
   };
+
+  getFriends: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const friendList = await userService.getFriends(id);
+      return res.json(friendList);
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 const userController = new UserController();
