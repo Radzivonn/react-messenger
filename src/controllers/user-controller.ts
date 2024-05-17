@@ -6,6 +6,16 @@ import { ApiError } from '../exceptions/api-error.js';
 import { validationResult } from 'express-validator';
 
 class UserController implements IUserController {
+  getUserData: RequestHandler = async (req, res, next) => {
+    try {
+      const accessToken = req.headers.authorization!.split(' ')[1]; // not undefined because before that auth middleware checked user auth
+      const user = userService.getUserData(accessToken);
+      return res.json(user);
+    } catch (e) {
+      next(e);
+    }
+  };
+
   registration: RequestHandler<{}, any, Pick<IUser, 'name' | 'email' | 'password'>> = async (
     req,
     res,
@@ -39,8 +49,9 @@ class UserController implements IUserController {
 
   logout: RequestHandler = async (req, res, next) => {
     try {
+      const { id } = req.params;
       const { refreshToken } = req.cookies; // TODO typing refreshToken
-      const isLoggedOut = await userService.logout(refreshToken);
+      const isLoggedOut = await userService.logout(id, refreshToken);
       if (isLoggedOut) {
         res.clearCookie('refreshToken');
         return res.status(204).json();

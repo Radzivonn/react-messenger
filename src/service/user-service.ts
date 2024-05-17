@@ -7,6 +7,14 @@ import { ApiError } from '../exceptions/api-error.js';
 import { Friends, User } from '../models/models.js';
 
 class UserService {
+  getUserData = (accessToken: string) => {
+    const userData = tokenService.validateAccessToken(accessToken);
+    if (!userData || typeof userData === 'string') {
+      throw ApiError.UnauthorizedError();
+    }
+    return new UserDto(userData);
+  };
+
   registration = async (
     name: string,
     email: string,
@@ -56,23 +64,23 @@ class UserService {
     };
   };
 
-  logout = async (refreshToken: string) => {
+  logout = async (userId: string, refreshToken: string) => {
     if (!refreshToken) {
-      throw ApiError.UnauthorizedError();
+      throw ApiError.UnauthenticatedError();
     }
-    const isRemoved = await tokenService.removeToken(refreshToken);
+    const isRemoved = await tokenService.removeToken(userId, refreshToken);
     return isRemoved;
   };
 
   refresh = async (refreshToken: string): Promise<IUserAuthResponse> => {
     if (!refreshToken) {
-      throw ApiError.UnauthorizedError();
+      throw ApiError.UnauthenticatedError();
     }
 
     const userData = tokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await tokenService.findToken(refreshToken);
-    if (!userData || !tokenFromDb) {
-      throw ApiError.UnauthorizedError();
+    if (!userData || typeof userData === 'string' || !tokenFromDb) {
+      throw ApiError.UnauthenticatedError();
     }
 
     const user = await User.findOne({ where: { email: userData.email } });
