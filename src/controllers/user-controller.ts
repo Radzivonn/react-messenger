@@ -6,7 +6,9 @@ import { ApiError } from '../exceptions/api-error.js';
 import { validationResult } from 'express-validator';
 
 class UserController implements IUserController {
-  getUserData: RequestHandler = async (req, res, next) => {
+  private COOKIES_MAX_AGE = 5 * 60 * 1000; // ? 5 minutes test value
+
+  getUserData: RequestHandler = (req, res, next) => {
     try {
       const accessToken = req.headers.authorization!.split(' ')[1]; // not undefined because before that auth middleware checked user auth
       const user = userService.getUserData(accessToken);
@@ -29,7 +31,10 @@ class UserController implements IUserController {
 
       const { name, email, password } = req.body;
       const user = await userService.registration(name, email, password);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 5 * 60 * 1000, httpOnly: true }); // ? 5 minutes
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: this.COOKIES_MAX_AGE,
+        httpOnly: true,
+      });
       return res.json(user);
     } catch (e) {
       next(e);
@@ -40,7 +45,10 @@ class UserController implements IUserController {
     try {
       const { email, password } = req.body;
       const user = await userService.login(email, password);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 5 * 60 * 1000, httpOnly: true }); // ? 5 minutes
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: this.COOKIES_MAX_AGE,
+        httpOnly: true,
+      });
       return res.json(user);
     } catch (e) {
       next(e);
@@ -66,7 +74,10 @@ class UserController implements IUserController {
     try {
       const { refreshToken } = req.cookies; // TODO typing refreshToken
       const user = await userService.refresh(refreshToken);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 5 * 60 * 1000, httpOnly: true }); // ? 5 minutes
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: this.COOKIES_MAX_AGE,
+        httpOnly: true,
+      });
       return res.json(user);
     } catch (e) {
       next(e);
@@ -79,7 +90,10 @@ class UserController implements IUserController {
       const { name: newName, email: newEmail, password: newPassword } = req.body.newData;
 
       const user = await userService.update(email, password, newName, newEmail, newPassword);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 5 * 60 * 1000, httpOnly: true }); // ? 5 minutes
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: this.COOKIES_MAX_AGE,
+        httpOnly: true,
+      });
       return res.json(user);
     } catch (e) {
       next(e);
