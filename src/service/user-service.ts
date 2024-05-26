@@ -5,6 +5,7 @@ import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
 import { Friends, User } from '../models/models.js';
+import { Op } from 'sequelize';
 
 class UserService {
   getUserData = (accessToken: string) => {
@@ -196,7 +197,8 @@ class UserService {
     const friends = await Friends.findOne({ where: { userId } });
 
     if (!friends || (friends && !friends.friendsList.length)) {
-      throw ApiError.BadRequest("This user's friends list is empty");
+      return [];
+      // throw ApiError.BadRequest("This user's friends list is empty");
     }
 
     const friendsDataPromises = friends.friendsList.map((id) => User.findOne({ where: { id } }));
@@ -207,6 +209,21 @@ class UserService {
 
     /* The returned array includes only data from successfully resolved promises in userDTO format */
     return friendsData.map((res) => new UserDto(res.value));
+  };
+
+  searchUsers = async (userId: string, search: string) => {
+    const users = await User.findAll({
+      where: {
+        id: {
+          [Op.not]: userId,
+        },
+        name: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+    });
+
+    return users.map((user) => new UserDto(user));
   };
 }
 

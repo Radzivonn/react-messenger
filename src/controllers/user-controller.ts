@@ -6,7 +6,7 @@ import { ApiError } from '../exceptions/api-error.js';
 import { validationResult } from 'express-validator';
 
 class UserController implements IUserController {
-  private COOKIES_MAX_AGE = 5 * 60 * 1000; // ? 5 minutes test value
+  private COOKIES_MAX_AGE = 15 * 60 * 1000; // ? 15 minutes test value
 
   getUserData: RequestHandler = (req, res, next) => {
     try {
@@ -136,6 +136,16 @@ class UserController implements IUserController {
       const { id } = req.params;
       const friendList = await userService.getFriends(id);
       return res.json(friendList);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  searchUsers: RequestHandler = async (req, res, next) => {
+    try {
+      const { id, search } = req.params;
+      const users = await userService.searchUsers(id, search);
+      return res.json(users);
     } catch (e) {
       next(e);
     }

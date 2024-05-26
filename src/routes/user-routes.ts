@@ -4,7 +4,7 @@ import { body } from 'express-validator';
 import { authMiddleware } from '../middlewares/auth-middleware.js';
 const userRouter = Router();
 
-userRouter.get('/getData', authMiddleware, userController.getUserData);
+userRouter.get('/:id/searching/:search', userController.searchUsers);
 userRouter.post(
   '/registration',
   body('email').isEmail(),
@@ -14,6 +14,7 @@ userRouter.post(
 userRouter.post('/login', userController.login);
 userRouter.post('/logout/:id', userController.logout);
 userRouter.get('/refresh', userController.refresh);
+userRouter.get('/getData', authMiddleware, userController.getUserData);
 userRouter.put('/update', authMiddleware, userController.update);
 userRouter.delete('/remove', authMiddleware, userController.remove);
 userRouter.post('/addFriend', authMiddleware, userController.addFriend);
