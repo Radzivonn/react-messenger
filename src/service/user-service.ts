@@ -196,10 +196,7 @@ class UserService {
   getFriends = async (userId: string) => {
     const friends = await Friends.findOne({ where: { userId } });
 
-    if (!friends || (friends && !friends.friendsList.length)) {
-      return [];
-      // throw ApiError.BadRequest("This user's friends list is empty");
-    }
+    if (!friends || (friends && !friends.friendsList.length)) return [];
 
     const friendsDataPromises = friends.friendsList.map((id) => User.findOne({ where: { id } }));
 
