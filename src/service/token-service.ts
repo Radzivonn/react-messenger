@@ -28,7 +28,7 @@ class TokenService {
       if (!JWT_ACCESS_SECRET) throw new Error('JWT access token secret does not exist');
 
       const userData = verify(token, JWT_ACCESS_SECRET);
-      return userData as IUserDTO;
+      return userData;
     } catch (e) {
       return null;
     }
@@ -41,7 +41,7 @@ class TokenService {
       if (!JWT_REFRESH_SECRET) throw new Error('Refresh token secret does not exist');
 
       const userData = verify(token, JWT_REFRESH_SECRET);
-      return userData as IUserDTO;
+      return userData;
     } catch (e) {
       return null;
     }
@@ -59,8 +59,8 @@ class TokenService {
     return token;
   };
 
-  removeToken = async (refreshToken: string) => {
-    const isRemoved = Boolean(await Token.destroy({ where: { refreshToken } }));
+  removeToken = async (userId: string, refreshToken: string) => {
+    const isRemoved = Boolean(await Token.destroy({ where: { userId, refreshToken } }));
     return isRemoved;
   };
 

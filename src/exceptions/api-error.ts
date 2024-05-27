@@ -1,5 +1,12 @@
 import { ValidationError } from 'express-validator';
 
+enum STATUS_CODES {
+  BAD_REQUEST = 400,
+  UNAUTHENTICATED = 401,
+  UNAUTHORIZED = 403,
+  NOT_FOUND = 404,
+}
+
 export class ApiError extends Error {
   status: number;
   errors: ValidationError[];
@@ -10,15 +17,19 @@ export class ApiError extends Error {
     this.errors = errors;
   }
 
+  static UnauthenticatedError() {
+    return new ApiError(STATUS_CODES.UNAUTHENTICATED, 'User is not authenticated');
+  }
+
   static UnauthorizedError() {
-    return new ApiError(401, 'User is not authorized');
+    return new ApiError(STATUS_CODES.UNAUTHORIZED, 'User is not authorized');
   }
 
   static NotFoundError(message: string) {
-    return new ApiError(404, message);
+    return new ApiError(STATUS_CODES.NOT_FOUND, message);
   }
 
   static BadRequest(message: string, errors: ValidationError[] = []) {
-    return new ApiError(400, message, errors);
+    return new ApiError(STATUS_CODES.BAD_REQUEST, message, errors);
   }
 }
