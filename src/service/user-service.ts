@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
-import { IUserAuthResponse, IUserModel } from '../types/types.js';
+import { IUserAuthResponse, IUserModel, Message } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
-import { Friends, User } from '../models/models.js';
+import { Chat, Friends, User } from '../models/models.js';
 import { Op } from 'sequelize';
 
 class UserService {
@@ -221,6 +221,41 @@ class UserService {
     });
 
     return users.map((user) => new UserDto(user));
+  };
+
+  getChat = async (chatId: string) => {
+    const chat = await Chat.findOne({ where: { chatId } });
+    if (!chat) throw ApiError.NotFoundError('This chat was not found');
+    return chat;
+  };
+
+  addChat = async (chatId: string, userId: string, receiverId: string) => {
+    return (
+      await Chat.findOrCreate({
+        where: { chatId },
+        defaults: {
+          chatId,
+          participants: [userId, receiverId],
+          messages: [],
+        },
+      })
+    )[0];
+  };
+
+  removeChat = async (chatId: string) => {
+    const chat = await Chat.findOne({ where: { chatId } });
+
+    if (!chat) throw ApiError.NotFoundError('This chat was not found');
+
+    await chat.destroy();
+  };
+
+  saveMessages = async (chatId: string, messages: Message[]) => {
+    const chat = await Chat.findOne({ where: { chatId } });
+
+    if (!chat) throw ApiError.BadRequest('This chat was not found');
+
+    return chat.update({ messages: [...chat.messages, ...messages] });
   };
 }
 
