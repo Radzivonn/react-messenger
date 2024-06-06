@@ -150,6 +150,46 @@ class UserController implements IUserController {
       next(e);
     }
   };
+
+  getChat: RequestHandler = async (req, res, next) => {
+    try {
+      const { chatId } = req.params;
+      const chat = await userService.getChat(chatId);
+      return res.json(chat);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  addChat: RequestHandler = async (req, res, next) => {
+    try {
+      const { chatId, userId, receiverId } = req.body;
+      const chat = await userService.addChat(chatId, userId, receiverId);
+      return res.json(chat);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  removeChat: RequestHandler = async (req, res, next) => {
+    try {
+      const { chatId } = req.params;
+      await userService.removeChat(chatId);
+      return res.status(204).json();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  saveMessages: RequestHandler = async (req, res, next) => {
+    try {
+      const { chatId, messages } = req.body;
+      const chat = await userService.saveMessages(chatId, messages);
+      return res.json(chat);
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 const userController = new UserController();
