@@ -1,8 +1,18 @@
 import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
 
-export enum WebsocketEvents {
-  MESSAGE_EVENT = 'message',
-  CONNECTION_EVENT = 'connection',
+export enum WEBSOCKET_EVENTS {
+  SEND_MESSAGE = 'send_message',
+  CONNECTION = 'connection',
+  JOIN_ROOM = 'join_room',
+  LEAVE_ROOM = 'leave_room',
+  DISCONNECTION = 'disconnect',
+}
+
+export interface Message {
+  chatId: string;
+  date: string;
+  name: string;
+  message: string;
 }
 
 export interface IUserDTO {
@@ -45,6 +55,18 @@ export interface IUserFriends {
 export interface IUserFriendsModel
   extends Model<InferAttributes<IUserFriendsModel>, InferCreationAttributes<IUserFriendsModel>>,
     IUserFriends {}
+
+export type ChatList = string[];
+
+export interface IChat {
+  chatId: string;
+  participants: string[];
+  messages: Message[];
+}
+
+export interface IChatModel
+  extends Model<InferAttributes<IChatModel>, InferCreationAttributes<IChatModel>>,
+    IChat {}
 
 export interface ITokens {
   accessToken: string;
