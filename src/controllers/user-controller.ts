@@ -1,12 +1,12 @@
 import { RequestHandler } from 'express';
 import { IFriendListHandlerReqBody, IUpdateUserHandlerReqBody, IUserController } from './types.js';
-import { IUser } from '../types/types.js';
+import { IUser, STATUS_CODES } from '../types/types.js';
 import { userService } from '../service/user-service.js';
 import { ApiError } from '../exceptions/api-error.js';
 import { validationResult } from 'express-validator';
 
 class UserController implements IUserController {
-  private COOKIES_MAX_AGE = 15 * 60 * 1000; // ? 15 minutes test value
+  private COOKIES_MAX_AGE = 30 * 60 * 1000; // ? 15 minutes test value
 
   getUserData: RequestHandler = (req, res, next) => {
     try {
@@ -62,7 +62,7 @@ class UserController implements IUserController {
       const isLoggedOut = await userService.logout(id, refreshToken);
       if (isLoggedOut) {
         res.clearCookie('refreshToken');
-        return res.status(204).json();
+        return res.status(STATUS_CODES.NO_CONTENT).json();
       }
       return next(ApiError.BadRequest('This User has not logged out'));
     } catch (e) {
@@ -105,7 +105,7 @@ class UserController implements IUserController {
       const { email, password } = req.body;
       await userService.remove(email, password);
       res.clearCookie('refreshToken');
-      return res.status(204).json();
+      return res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -114,8 +114,8 @@ class UserController implements IUserController {
   addFriend: RequestHandler<{}, any, IFriendListHandlerReqBody> = async (req, res, next) => {
     try {
       const { userId, friendId } = req.body;
-      const friends = await userService.addFriend(userId, friendId);
-      return res.json(friends);
+      await userService.addFriend(userId, friendId);
+      return res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -124,8 +124,8 @@ class UserController implements IUserController {
   removeFriend: RequestHandler<{}, any, IFriendListHandlerReqBody> = async (req, res, next) => {
     try {
       const { userId, friendId } = req.body;
-      const friends = await userService.removeFriend(userId, friendId);
-      return res.json(friends);
+      await userService.removeFriend(userId, friendId);
+      return res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -151,41 +151,11 @@ class UserController implements IUserController {
     }
   };
 
-  getChat: RequestHandler = async (req, res, next) => {
+  getUserChats: RequestHandler = async (req, res, next) => {
     try {
-      const { chatId } = req.params;
-      const chat = await userService.getChat(chatId);
-      return res.json(chat);
-    } catch (e) {
-      next(e);
-    }
-  };
-
-  addChat: RequestHandler = async (req, res, next) => {
-    try {
-      const { chatId, userId, receiverId } = req.body;
-      const chat = await userService.addChat(chatId, userId, receiverId);
-      return res.json(chat);
-    } catch (e) {
-      next(e);
-    }
-  };
-
-  removeChat: RequestHandler = async (req, res, next) => {
-    try {
-      const { chatId } = req.params;
-      await userService.removeChat(chatId);
-      return res.status(204).json();
-    } catch (e) {
-      next(e);
-    }
-  };
-
-  saveMessages: RequestHandler = async (req, res, next) => {
-    try {
-      const { chatId, messages } = req.body;
-      const chat = await userService.saveMessages(chatId, messages);
-      return res.json(chat);
+      const { id } = req.params;
+      const userChats = await userService.getUserChats(id);
+      return res.json(userChats);
     } catch (e) {
       next(e);
     }
