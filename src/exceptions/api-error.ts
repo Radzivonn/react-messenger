@@ -1,11 +1,5 @@
 import { ValidationError } from 'express-validator';
-
-enum STATUS_CODES {
-  BAD_REQUEST = 400,
-  UNAUTHENTICATED = 401,
-  UNAUTHORIZED = 403,
-  NOT_FOUND = 404,
-}
+import { STATUS_CODES } from '../types/types.js';
 
 export class ApiError extends Error {
   status: number;
