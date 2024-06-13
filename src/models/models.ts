@@ -39,7 +39,8 @@ const Chat = sequelize.define<IChatModel>('chat', {
     primaryKey: true,
     autoIncrement: false,
   },
-  participants: { type: DataTypes.ARRAY(DataTypes.UUID) },
+  participantsIds: { type: DataTypes.ARRAY(DataTypes.UUID) },
+  participantsNames: { type: DataTypes.ARRAY(DataTypes.STRING) },
   messages: { type: DataTypes.ARRAY(DataTypes.JSON) },
 });
 
