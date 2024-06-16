@@ -25,7 +25,6 @@ const startSocketServer = (io: Server<ClientToServerEvents, ServerToClientEvents
     socket.on(WEBSOCKET_EVENTS.LEAVE_ROOM, (chatId) => {
       socket.leave(chatId);
       socket.removeAllListeners();
-      socket.emit(WEBSOCKET_EVENTS.LEFT_ROOM);
       io.to(chatId).emit(WEBSOCKET_EVENTS.DISCONNECT_PARTICIPANT);
     });
 

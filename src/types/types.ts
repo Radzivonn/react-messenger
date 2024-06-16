@@ -19,7 +19,6 @@ export enum WEBSOCKET_EVENTS {
   JOIN_ROOM = 'join_room',
   JOINED_ROOM_SUCCESSFULLY = 'joined_room_successfully',
   LEAVE_ROOM = 'leave_room',
-  LEFT_ROOM = 'left_room',
   CONNECT_PARTICIPANT = 'connect_participant',
   DISCONNECT_PARTICIPANT = 'disconnect_participant',
 }
@@ -32,7 +31,6 @@ interface JoinedRoomSuccessfullyPayload {
 export interface ServerToClientEvents {
   receive_message: (message: Message) => void;
   joined_room_successfully: (payload: JoinedRoomSuccessfullyPayload) => void;
-  left_room: () => void;
   connect_participant: (isReceiverOnline: boolean) => void;
   disconnect_participant: () => void;
 }
