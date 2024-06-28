@@ -1,5 +1,4 @@
 import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
-import { Socket } from 'socket.io';
 
 export enum STATUS_CODES {
   NO_CONTENT = 204,
@@ -7,6 +6,45 @@ export enum STATUS_CODES {
   UNAUTHENTICATED = 401,
   UNAUTHORIZED = 403,
   NOT_FOUND = 404,
+}
+
+export interface IAuthService {
+  registration: (
+    name: string,
+    email: string,
+    password: string,
+    role?: string,
+  ) => Promise<IUserAuthResponse>;
+  login: (email: string, password: string) => Promise<IUserAuthResponse>;
+  logout: (userId: string, refreshToken: string) => Promise<boolean>;
+  refresh: (refreshToken: string) => Promise<IUserAuthResponse>;
+}
+
+export interface IUserService {
+  getUserData: (accessToken: string) => IUserDTO;
+  updateAccountData: (
+    email: string,
+    password: string,
+    newName: string,
+    newEmail: string,
+    newPassword: string,
+  ) => Promise<IUserAuthResponse>;
+  removeAccount: (email: string, password: string) => Promise<void>;
+}
+
+export interface IFriendListService {
+  addFriend: (userId: string, friendId: string) => Promise<FriendsList>;
+  removeFriend: (userId: string, friendId: string) => Promise<FriendsList>;
+  getFriends: (userId: string) => Promise<IUserDTO[]>;
+  searchUsers: (userId: string, search: string) => Promise<IUserDTO[]>;
+}
+
+export interface IChatService {
+  getChat: (chatId: string) => Promise<IChatModel>;
+  getUserChats: (userId: string) => Promise<IChatModel[]>;
+  addChat: (chatId: string, userId: string, receiverId: string) => Promise<[IChatModel, boolean]>;
+  removeChat: (chatId: string) => Promise<void>;
+  saveMessages: (chatId: string, messages: Message[]) => Promise<IChatModel>;
 }
 
 export enum WEBSOCKET_EVENTS {
