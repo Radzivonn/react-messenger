@@ -1,11 +1,11 @@
 import { Server } from 'socket.io';
 import { ClientToServerEvents, ServerToClientEvents, WEBSOCKET_EVENTS } from '../types/types.js';
-import { userService } from './user-service.js';
+import { chatService } from './chat-service.js';
 
 const startSocketServer = (io: Server<ClientToServerEvents, ServerToClientEvents>) => {
   io.on(WEBSOCKET_EVENTS.CONNECTION, (socket) => {
     socket.on(WEBSOCKET_EVENTS.JOIN_ROOM, async ({ chatId, userId, receiverId }) => {
-      const [chat, isCreated] = await userService.addChat(chatId, userId, receiverId);
+      const [chat, isCreated] = await chatService.addChat(chatId, userId, receiverId);
       const isReceiverOnline = (await io.in(chatId).fetchSockets()).length > 0;
 
       socket.join(chatId);
@@ -18,7 +18,7 @@ const startSocketServer = (io: Server<ClientToServerEvents, ServerToClientEvents
     });
 
     socket.on(WEBSOCKET_EVENTS.SEND_MESSAGE, async (message) => {
-      await userService.saveMessages(message.chatId, [message]);
+      await chatService.saveMessages(message.chatId, [message]);
       io.to(message.chatId).emit(WEBSOCKET_EVENTS.RECEIVE_MESSAGE, message);
     });
 
