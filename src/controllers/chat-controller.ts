@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { IChatService } from '../types/types.js';
+import { IChatService, STATUS_CODES } from '../types/types.js';
 import BaseController from './base-controller.js';
 import { chatService } from '../service/chat-service.js';
 
@@ -13,8 +13,8 @@ class ChatController extends BaseController {
 
   getUserChats: RequestHandler = async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const userChats = await this.chatService.getUserChats(id);
+      const { id, name } = req.params;
+      const userChats = await this.chatService.getUserChats(id, name);
       return res.json(userChats);
     } catch (e) {
       next(e);

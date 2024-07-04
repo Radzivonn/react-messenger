@@ -10,11 +10,11 @@ class ChatService implements IChatService {
     return chat;
   };
 
-  getUserChats = async (userId: string) => {
+  getUserChats = async (userId: string, userName: string) => {
     const userChats = await Chat.findAll({
       where: {
-        participantsIds: {
-          [Op.contains]: [userId],
+        participants: {
+          [Op.contains]: [{ userId, userName }],
         },
       },
     });
@@ -32,12 +32,19 @@ class ChatService implements IChatService {
 
     if (participants.length < 2) throw ApiError.NotFoundError('Participants not found');
 
+    const user = participants.find((user) => user.id === userId);
+    const receiver = participants.find((user) => user.id !== userId);
+
+    if (!user || !receiver) throw ApiError.NotFoundError('Some participant was not found');
+
     const chat = await Chat.findOrCreate({
       where: { chatId },
       defaults: {
         chatId,
-        participantsIds: [userId, receiverId],
-        participantsNames: [participants[0].name, participants[1].name],
+        participants: [
+          { userId: user.id, userName: user.name },
+          { userId: receiver.id, userName: receiver.name },
+        ],
         messages: [],
       },
     });

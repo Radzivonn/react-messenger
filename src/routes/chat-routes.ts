@@ -4,6 +4,6 @@ import chatController from '../controllers/chat-controller.js';
 
 const chatRouter = Router();
 
-chatRouter.get('/chatList/:id', authMiddleware, chatController.getUserChats);
+chatRouter.get('/chatList/:id/:name', authMiddleware, chatController.getUserChats);
 
 export default chatRouter;
