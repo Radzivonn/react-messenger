@@ -1,4 +1,5 @@
 import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { Socket } from 'socket.io';
 
 export enum STATUS_CODES {
   NO_CONTENT = 204,
@@ -30,19 +31,20 @@ export interface IUserService {
     newPassword: string,
   ) => Promise<IUserAuthResponse>;
   removeAccount: (email: string, password: string) => Promise<void>;
+  changeOnlineStatus: (userId: string, online: boolean) => Promise<[affectedCount: number]>;
 }
 
 export interface IFriendListService {
   addFriend: (userId: string, friendId: string) => Promise<FriendsList>;
   removeFriend: (userId: string, friendId: string) => Promise<FriendsList>;
-  getFriends: (userId: string) => Promise<IUserDTO[]>;
-  searchUsers: (userId: string, search: string) => Promise<IUserDTO[]>;
+  getFriends: (userId: string) => Promise<IUserWithOnlineStatus[]>;
+  searchUsers: (userId: string, search: string) => Promise<IUserWithOnlineStatus[]>;
 }
 
 export interface IChatService {
   getChat: (chatId: string) => Promise<IChatModel>;
-  getUserChats: (userId: string) => Promise<IChatModel[]>;
-  addChat: (chatId: string, userId: string, receiverId: string) => Promise<[IChatModel, boolean]>;
+  getUserChats: (userId: string, userName: string) => Promise<IChatModel[]>;
+  addChat: (chatId: string, userId: string, receiverId: string) => Promise<[IChat, boolean]>;
   removeChat: (chatId: string) => Promise<void>;
   saveMessages: (chatId: string, messages: Message[]) => Promise<IChatModel>;
 }
@@ -56,19 +58,21 @@ export enum WEBSOCKET_EVENTS {
   DISCONNECTING = 'disconnecting', // * Fired when the client is going to be disconnected (but hasn't left its rooms yet).
   JOIN_ROOM = 'join_room',
   JOINED_ROOM_SUCCESSFULLY = 'joined_room_successfully',
+  LEFT_ROOM_SUCCESSFULLY = 'left_room_successfully',
   LEAVE_ROOM = 'leave_room',
   CONNECT_PARTICIPANT = 'connect_participant',
   DISCONNECT_PARTICIPANT = 'disconnect_participant',
 }
 
 interface JoinedRoomSuccessfullyPayload {
-  messages: Message[];
+  chat: IChat;
   isCreated: boolean;
 }
 
 export interface ServerToClientEvents {
   receive_message: (message: Message) => void;
   joined_room_successfully: (payload: JoinedRoomSuccessfullyPayload) => void;
+  left_room_successfully: () => void;
   connect_participant: (isReceiverOnline: boolean) => void;
   disconnect_participant: () => void;
 }
@@ -80,6 +84,7 @@ export interface JoinRoomPayload {
 }
 
 export interface ClientToServerEvents {
+  connection: (socket: Socket<ClientToServerEvents, ServerToClientEvents>, userId: string) => void;
   join_room: (payload: JoinRoomPayload) => void;
   send_message: (message: Message) => void;
   leave_room: (chatId: string) => void;
@@ -99,6 +104,10 @@ export interface IUserDTO {
   role: string;
 }
 
+export interface IUserWithOnlineStatus extends IUserDTO {
+  online: boolean;
+}
+
 export interface IUserAuthResponse {
   user: IUserDTO;
   accessToken: string;
@@ -112,6 +121,14 @@ export interface IUser extends IUserDTO {
 export interface IUserModel
   extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>>,
     IUser {}
+
+export interface IOnlineStatus {
+  userId: string;
+  online: boolean;
+}
+export interface IOnlineStatusModel
+  extends Model<InferAttributes<IOnlineStatusModel>, InferCreationAttributes<IOnlineStatusModel>>,
+    IOnlineStatus {}
 
 export interface IUserToken {
   userId: string;
@@ -133,15 +150,6 @@ export interface IUserFriendsModel
   extends Model<InferAttributes<IUserFriendsModel>, InferCreationAttributes<IUserFriendsModel>>,
     IUserFriends {}
 
-export type ChatList = string[];
-
-export interface IChat {
-  chatId: string;
-  participantsIds: string[];
-  participantsNames: string[];
-  messages: Message[];
-}
-
 export interface IChatModel
   extends Model<InferAttributes<IChatModel>, InferCreationAttributes<IChatModel>>,
     IChat {}
@@ -149,4 +157,15 @@ export interface IChatModel
 export interface ITokens {
   accessToken: string;
   refreshToken: string;
+}
+
+interface Participant {
+  userId: string;
+  userName: string;
+}
+
+export interface IChat {
+  chatId: string;
+  participants: Participant[];
+  messages: Message[];
 }
