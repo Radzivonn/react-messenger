@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { IUpdateUserHandlerReqBody } from './types.js';
-import { IUser, IUserService, STATUS_CODES } from '../types/types.js';
+import { IOnlineStatus, IUser, IUserService, STATUS_CODES } from '../types/types.js';
 import { userService } from '../service/user-service.js';
 import BaseController from './base-controller.js';
 
@@ -57,6 +57,16 @@ class UserController extends BaseController {
       const { email, password } = req.body;
       await this.userService.removeAccount(email, password);
       res.clearCookie('refreshToken');
+      return res.status(STATUS_CODES.NO_CONTENT).json();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  changeOnlineStatus: RequestHandler<{}, any, IOnlineStatus> = async (req, res, next) => {
+    try {
+      const { userId, online } = req.body;
+      await this.userService.changeOnlineStatus(userId, online);
       return res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);

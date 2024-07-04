@@ -3,7 +3,7 @@ import { IUserAuthResponse, IUserService } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
-import { User } from '../models/models.js';
+import { OnlineStatus, User } from '../models/models.js';
 
 class UserService implements IUserService {
   getUserData = (accessToken: string) => {
@@ -69,6 +69,10 @@ class UserService implements IUserService {
     }
 
     await user.destroy();
+  };
+
+  changeOnlineStatus = async (userId: string, online: boolean) => {
+    return OnlineStatus.update({ online }, { where: { userId } });
   };
 }
 

@@ -4,7 +4,7 @@ import { IAuthService, IUserAuthResponse } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
-import { User } from '../models/models.js';
+import { OnlineStatus, User } from '../models/models.js';
 
 class AuthService implements IAuthService {
   registration = async (
@@ -23,6 +23,7 @@ class AuthService implements IAuthService {
     const randomId = v4();
 
     const user = await User.create({ id: randomId, name, email, password: hashPassword, role });
+    await OnlineStatus.create({ userId: randomId, online: false });
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateTokens({ ...userDto });

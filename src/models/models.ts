@@ -1,6 +1,12 @@
 import { sequelize } from '../db/dbConfig.js';
 import { DataTypes } from 'sequelize';
-import { IChatModel, IUserFriendsModel, IUserModel, IUserTokenModel } from '../types/types.js';
+import {
+  IChatModel,
+  IOnlineStatusModel,
+  IUserFriendsModel,
+  IUserModel,
+  IUserTokenModel,
+} from '../types/types.js';
 
 const User = sequelize.define<IUserModel>('user', {
   id: {
@@ -13,6 +19,15 @@ const User = sequelize.define<IUserModel>('user', {
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING(60) },
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
+});
+
+const OnlineStatus = sequelize.define<IOnlineStatusModel>('online_status', {
+  userId: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    autoIncrement: false,
+  },
+  online: { type: DataTypes.BOOLEAN },
 });
 
 const Token = sequelize.define<IUserTokenModel>('token', {
@@ -39,15 +54,17 @@ const Chat = sequelize.define<IChatModel>('chat', {
     primaryKey: true,
     autoIncrement: false,
   },
-  participantsIds: { type: DataTypes.ARRAY(DataTypes.UUID) },
-  participantsNames: { type: DataTypes.ARRAY(DataTypes.STRING) },
+  participants: { type: DataTypes.ARRAY(DataTypes.JSONB) }, // use JSONB because of usage Op.contains operator in getUserChats method
   messages: { type: DataTypes.ARRAY(DataTypes.JSON) },
 });
 
 User.hasOne(Token, { onDelete: 'CASCADE' });
 Token.belongsTo(User, { foreignKey: 'userId' });
 
+User.hasOne(OnlineStatus, { onDelete: 'CASCADE' });
+OnlineStatus.belongsTo(User, { foreignKey: 'userId' });
+
 User.hasOne(Friends, { onDelete: 'CASCADE' });
 Friends.belongsTo(User, { foreignKey: 'userId' });
 
-export { User, Token, Friends, Chat };
+export { User, OnlineStatus, Token, Friends, Chat };
