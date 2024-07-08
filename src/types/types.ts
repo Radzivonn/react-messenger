@@ -50,6 +50,8 @@ export interface IChatService {
 }
 
 export enum WEBSOCKET_EVENTS {
+  SOCKET_SUCCESSFULLY_CONNECTED = 'socket_successfully_connected',
+  SOCKET_SUCCESSFULLY_DISCONNECTED = 'socket_successfully_disconnected',
   SEND_MESSAGE = 'send_message',
   RECEIVE_MESSAGE = 'receive_message',
   CONNECTION = 'connection',
@@ -61,7 +63,9 @@ export enum WEBSOCKET_EVENTS {
   LEFT_ROOM_SUCCESSFULLY = 'left_room_successfully',
   LEAVE_ROOM = 'leave_room',
   CONNECT_PARTICIPANT = 'connect_participant',
+  PARTICIPANT_CONNECTED = 'participant_connected',
   DISCONNECT_PARTICIPANT = 'disconnect_participant',
+  PARTICIPANT_DISCONNECTED = 'participant_disconnected',
 }
 
 interface JoinedRoomSuccessfullyPayload {
@@ -70,11 +74,14 @@ interface JoinedRoomSuccessfullyPayload {
 }
 
 export interface ServerToClientEvents {
+  socket_successfully_connected: (friendsOnlineStatuses: Record<string, boolean>) => void;
+  socket_successfully_disconnected: () => void;
   receive_message: (message: Message) => void;
   joined_room_successfully: (payload: JoinedRoomSuccessfullyPayload) => void;
   left_room_successfully: () => void;
   connect_participant: (isReceiverOnline: boolean) => void;
-  disconnect_participant: () => void;
+  participant_connected: (userId: string) => void;
+  participant_disconnected: (userId: string) => void;
 }
 
 export interface JoinRoomPayload {
@@ -87,7 +94,9 @@ export interface ClientToServerEvents {
   connection: (socket: Socket<ClientToServerEvents, ServerToClientEvents>, userId: string) => void;
   join_room: (payload: JoinRoomPayload) => void;
   send_message: (message: Message) => void;
-  leave_room: (chatId: string) => void;
+  leave_room: () => void;
+  connect_participant: (userId: string, userName: string) => void;
+  disconnect_participant: (userId: string) => void;
 }
 
 export interface Message {
@@ -126,6 +135,7 @@ export interface IOnlineStatus {
   userId: string;
   online: boolean;
 }
+
 export interface IOnlineStatusModel
   extends Model<InferAttributes<IOnlineStatusModel>, InferCreationAttributes<IOnlineStatusModel>>,
     IOnlineStatus {}
