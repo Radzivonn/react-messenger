@@ -53,13 +53,7 @@ class FriendListService implements IFriendListService {
       },
     });
 
-    const onlineStatuses = await OnlineStatus.findAll({
-      where: {
-        userId: {
-          [Op.in]: friends.friendsList,
-        },
-      },
-    });
+    const onlineStatuses = await this.getOnlineStatusesByIds(friends.friendsList);
 
     return friendsData.map((friend) => ({
       ...new UserDto(friend),
@@ -79,13 +73,8 @@ class FriendListService implements IFriendListService {
       },
     });
 
-    const onlineStatuses = await OnlineStatus.findAll({
-      where: {
-        userId: {
-          [Op.in]: users.map((user) => user.id),
-        },
-      },
-    });
+    const idsArray = users.map((user) => user.id);
+    const onlineStatuses = await this.getOnlineStatusesByIds(idsArray);
 
     return users.map((user) => ({
       ...new UserDto(user),
@@ -93,11 +82,28 @@ class FriendListService implements IFriendListService {
     }));
   };
 
+  getFriendsOnlineStatuses = async (userId: string) => {
+    const friends = await Friends.findOne({ where: { userId } });
+
+    if (!friends || (friends && !friends.friendsList.length)) return [];
+
+    return this.getOnlineStatusesByIds(friends.friendsList);
+  };
+
   private findOnlineStatusById = (onlineStatuses: IOnlineStatusModel[], userId: string) => {
     const foundStatus = onlineStatuses.find((userStatus) => userStatus.userId === userId);
     if (!foundStatus) return false;
     return foundStatus.online;
   };
+
+  private getOnlineStatusesByIds = (idsArray: string[]) =>
+    OnlineStatus.findAll({
+      where: {
+        userId: {
+          [Op.in]: idsArray,
+        },
+      },
+    });
 }
 
 export const friendListService = new FriendListService();
