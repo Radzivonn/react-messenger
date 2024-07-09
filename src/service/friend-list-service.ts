@@ -52,13 +52,7 @@ class FriendListService implements IFriendListService {
         },
       },
     });
-
-    const onlineStatuses = await this.getOnlineStatusesByIds(friends.friendsList);
-
-    return friendsData.map((friend) => ({
-      ...new UserDto(friend),
-      online: this.findOnlineStatusById(onlineStatuses, friend.id),
-    }));
+    return friendsData;
   };
 
   searchUsers = async (userId: string, search: string) => {
