@@ -51,9 +51,17 @@ const startSocketServer = (io: Server<ClientToServerEvents, ServerToClientEvents
       });
     });
 
+    socket.on(WEBSOCKET_EVENTS.START_TYPING, (chatId, userId) => {
+      socket.to(chatId).emit(WEBSOCKET_EVENTS.RECEIVER_START_TYPING, userId);
+    });
+
+    socket.on(WEBSOCKET_EVENTS.STOP_TYPING, (chatId, userId) => {
+      socket.to(chatId).emit(WEBSOCKET_EVENTS.RECEIVER_STOP_TYPING, userId);
+    });
+
     socket.on(WEBSOCKET_EVENTS.SEND_MESSAGE, async (message) => {
       await chatService.saveMessages(message.chatId, [message]);
-      io.to(message.chatId).emit(WEBSOCKET_EVENTS.RECEIVE_MESSAGE, message);
+      socket.to(message.chatId).emit(WEBSOCKET_EVENTS.RECEIVE_MESSAGE, message);
     });
   });
 
