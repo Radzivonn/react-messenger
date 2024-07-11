@@ -54,6 +54,10 @@ export enum WEBSOCKET_EVENTS {
   SOCKET_SUCCESSFULLY_DISCONNECTED = 'socket_successfully_disconnected',
   SEND_MESSAGE = 'send_message',
   RECEIVE_MESSAGE = 'receive_message',
+  START_TYPING = 'start_typing',
+  STOP_TYPING = 'stop_typing',
+  RECEIVER_START_TYPING = 'receiver_start_typing',
+  RECEIVER_STOP_TYPING = 'receiver_stop_typing',
   CONNECTION = 'connection',
   CONNECTION_ERROR = 'connect_error',
   DISCONNECT = 'disconnect', // * Fired upon disconnection.
@@ -77,6 +81,8 @@ export interface ServerToClientEvents {
   socket_successfully_connected: (friendsOnlineStatuses: Record<string, boolean>) => void;
   socket_successfully_disconnected: () => void;
   receive_message: (message: Message) => void;
+  receiver_start_typing: (userId: string) => void;
+  receiver_stop_typing: (userId: string) => void;
   joined_room_successfully: (payload: JoinedRoomSuccessfullyPayload) => void;
   left_room_successfully: () => void;
   connect_participant: (isReceiverOnline: boolean) => void;
@@ -91,7 +97,8 @@ export interface JoinRoomPayload {
 }
 
 export interface ClientToServerEvents {
-  connection: (socket: Socket<ClientToServerEvents, ServerToClientEvents>, userId: string) => void;
+  start_typing: (chatId: string, userId: string) => void;
+  stop_typing: (chatId: string, userId: string) => void;
   join_room: (payload: JoinRoomPayload) => void;
   send_message: (message: Message) => void;
   leave_room: () => void;
