@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRouter from './routes/auth-routes.js';
@@ -13,10 +15,14 @@ import { sequelize } from './db/dbConfig.js';
 import startSocketServer from './service/socket-service.js';
 import 'dotenv/config'; // ???
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const PORT = process.env.SERVER_PORT;
 const app = express();
 
 app.use(express.json());
+app.use('/src/users-avatars', express.static(path.join(__dirname, 'users-avatars')));
 app.use(cookieParser());
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use('/auth', authRouter);
