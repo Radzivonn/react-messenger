@@ -69,15 +69,15 @@ const Chat = sequelize.define<IChatModel>('chat', {
 });
 
 User.hasOne(Token, { onDelete: 'CASCADE' });
-Token.belongsTo(User, { foreignKey: 'userId' });
+Token.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 User.hasOne(Avatar, { onDelete: 'CASCADE' });
-Avatar.belongsTo(User, { foreignKey: 'userId' });
+Avatar.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 User.hasOne(OnlineStatus, { onDelete: 'CASCADE' });
-OnlineStatus.belongsTo(User, { foreignKey: 'userId' });
+OnlineStatus.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 User.hasOne(Friends, { onDelete: 'CASCADE' });
-Friends.belongsTo(User, { foreignKey: 'userId' });
+Friends.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 export { User, Avatar, OnlineStatus, Token, Friends, Chat };
