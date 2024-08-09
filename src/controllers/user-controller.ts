@@ -38,6 +38,45 @@ class UserController extends BaseController {
         newEmail,
         newPassword,
       );
+
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: this.COOKIES_MAX_AGE,
+        httpOnly: true,
+      });
+      return res.json(user);
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  getAvatarImage: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const avatarPath = await this.userService.getAvatarImage(id);
+      res.json({ avatarPath });
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  updateAvatarImage: RequestHandler = async (req, res, next) => {
+    try {
+      if (req.file) {
+        const { id } = req.params;
+        await this.userService.updateAvatarImage(id, req.file.path);
+        return res.status(STATUS_CODES.NO_CONTENT).json();
+      }
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  updateUserName: RequestHandler<{}, any, Pick<IUser, 'id' | 'name'>> = async (req, res, next) => {
+    try {
+      const { id, name } = req.body;
+
+      const user = await this.userService.updateUserName(id, name);
+
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,

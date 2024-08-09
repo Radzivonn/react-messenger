@@ -24,3 +24,5 @@ tests
 *.sln
 *.sw?
 .env
+
+users-avatars
