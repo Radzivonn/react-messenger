@@ -51,11 +51,11 @@ class TokenService {
     const tokenData = await Token.findOne({ where: { userId } });
 
     if (tokenData) {
-      const newTokenData = await Token.update({ refreshToken }, { where: { userId } });
+      const newTokenData = Token.update({ refreshToken }, { where: { userId } });
       return newTokenData;
     }
 
-    const token = await Token.create({ userId, refreshToken });
+    const token = Token.create({ userId, refreshToken });
     return token;
   };
 
@@ -64,9 +64,8 @@ class TokenService {
     return isRemoved;
   };
 
-  findToken = async (refreshToken: string) => {
-    const tokenData = await Token.findOne({ where: { refreshToken } });
-    return tokenData;
+  findToken = (refreshToken: string) => {
+    return Token.findOne({ where: { refreshToken } });
   };
 }
 

@@ -45,7 +45,7 @@ class FriendListService implements IFriendListService {
 
     if (!friends || (friends && !friends.friendsList.length)) return [];
 
-    const friendsData = await User.findAll({
+    const friendsData = User.findAll({
       where: {
         id: {
           [Op.in]: friends.friendsList,
