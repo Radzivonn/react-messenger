@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { IChatService, STATUS_CODES } from '../types/types.js';
+import { IChatService } from '../types/types.js';
 import BaseController from './base-controller.js';
 import { chatService } from '../service/chat-service.js';
 

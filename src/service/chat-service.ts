@@ -10,8 +10,8 @@ class ChatService implements IChatService {
     return chat;
   };
 
-  getUserChats = async (userId: string, userName: string) => {
-    const userChats = await Chat.findAll({
+  getUserChats = (userId: string, userName: string) => {
+    const userChats = Chat.findAll({
       where: {
         participants: {
           [Op.contains]: [{ userId, userName }],
@@ -54,7 +54,7 @@ class ChatService implements IChatService {
   removeChat = async (chatId: string) => {
     const chat = await Chat.findOne({ where: { chatId } });
     if (!chat) throw ApiError.NotFoundError('This chat was not found');
-    await chat.destroy();
+    return chat.destroy();
   };
 
   saveMessages = async (chatId: string, messages: Message[]) => {

@@ -6,6 +6,11 @@ export interface IUpdateUserHandlerReqBody {
   newData: Omit<IUser, 'id'>;
 }
 
+export interface IUpdateAvatarHandlerReqBody {
+  userId: string;
+  avatar: File;
+}
+
 export interface IFriendListHandlerReqBody {
   userId: string;
   friendId: string;

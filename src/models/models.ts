@@ -1,6 +1,7 @@
 import { sequelize } from '../db/dbConfig.js';
 import { DataTypes } from 'sequelize';
 import {
+  IAvatarModel,
   IChatModel,
   IOnlineStatusModel,
   IUserFriendsModel,
@@ -19,6 +20,15 @@ const User = sequelize.define<IUserModel>('user', {
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING(60) },
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
+});
+
+const Avatar = sequelize.define<IAvatarModel>('avatar', {
+  userId: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    autoIncrement: false,
+  },
+  avatarPath: { type: DataTypes.STRING, allowNull: true },
 });
 
 const OnlineStatus = sequelize.define<IOnlineStatusModel>('online_status', {
@@ -59,12 +69,15 @@ const Chat = sequelize.define<IChatModel>('chat', {
 });
 
 User.hasOne(Token, { onDelete: 'CASCADE' });
-Token.belongsTo(User, { foreignKey: 'userId' });
+Token.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+
+User.hasOne(Avatar, { onDelete: 'CASCADE' });
+Avatar.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 User.hasOne(OnlineStatus, { onDelete: 'CASCADE' });
-OnlineStatus.belongsTo(User, { foreignKey: 'userId' });
+OnlineStatus.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
 User.hasOne(Friends, { onDelete: 'CASCADE' });
-Friends.belongsTo(User, { foreignKey: 'userId' });
+Friends.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 
-export { User, OnlineStatus, Token, Friends, Chat };
+export { User, Avatar, OnlineStatus, Token, Friends, Chat };

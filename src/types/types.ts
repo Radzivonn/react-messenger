@@ -1,5 +1,4 @@
 import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
-import { Socket } from 'socket.io';
 
 export enum STATUS_CODES {
   NO_CONTENT = 204,
@@ -30,6 +29,9 @@ export interface IUserService {
     newEmail: string,
     newPassword: string,
   ) => Promise<IUserAuthResponse>;
+  updateAvatarImage: (userId: string, avatarPath: string) => Promise<[affectedCount: number]>;
+  getAvatarImage: (userId: string) => Promise<string>;
+  updateUserName: (email: string, newName: string) => Promise<IUserAuthResponse>;
   removeAccount: (email: string, password: string) => Promise<void>;
   changeOnlineStatus: (userId: string, online: boolean) => Promise<[affectedCount: number]>;
 }
@@ -137,6 +139,15 @@ export interface IUser extends IUserDTO {
 export interface IUserModel
   extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>>,
     IUser {}
+
+export interface IAvatar {
+  userId: string;
+  avatarPath: string | null;
+}
+
+export interface IAvatarModel
+  extends Model<InferAttributes<IAvatarModel>, InferCreationAttributes<IAvatarModel>>,
+    IAvatar {}
 
 export interface IOnlineStatus {
   userId: string;
