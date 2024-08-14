@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt';
+import { rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { IChatModel, IUserAuthResponse, IUserModel, IUserService } from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
@@ -80,19 +82,28 @@ class UserService implements IUserService {
     return this.getUserDTOWithTokens(updatedUser);
   };
 
-  removeAccount = async (email: string, password: string) => {
-    const user = await User.findOne({ where: { email } });
+  removeAccount = async (userId: string) => {
+    const user = await User.findOne({ where: { id: userId } });
 
     if (!user) {
       throw ApiError.NotFoundError('This User was not found');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw ApiError.BadRequest('Incorrect password');
+    const userChats = await chatService.getUserChats(userId, user.name);
+
+    const removedChats: Promise<void>[] = [];
+
+    userChats.forEach((chat) => removedChats.push(chat.destroy()));
+
+    await Promise.all(removedChats);
+
+    const avatar = await Avatar.findOne({ where: { userId } });
+    if (avatar) {
+      const userDir = 'src/users-avatars/' + userId;
+      if (existsSync(userDir)) await rm(userDir, { recursive: true, force: true });
     }
 
-    await user.destroy();
+    return user.destroy();
   };
 
   changeOnlineStatus = async (userId: string, online: boolean) => {
