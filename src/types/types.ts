@@ -32,7 +32,7 @@ export interface IUserService {
   updateAvatarImage: (userId: string, avatarPath: string) => Promise<[affectedCount: number]>;
   getAvatarImage: (userId: string) => Promise<string>;
   updateUserName: (email: string, newName: string) => Promise<IUserAuthResponse>;
-  removeAccount: (email: string, password: string) => Promise<void>;
+  removeAccount: (userId: string) => Promise<void>;
   changeOnlineStatus: (userId: string, online: boolean) => Promise<[affectedCount: number]>;
 }
 

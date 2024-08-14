@@ -87,14 +87,10 @@ class UserController extends BaseController {
     }
   };
 
-  removeAccount: RequestHandler<{}, any, Pick<IUser, 'email' | 'password'>> = async (
-    req,
-    res,
-    next,
-  ) => {
+  removeAccount: RequestHandler = async (req, res, next) => {
     try {
-      const { email, password } = req.body;
-      await this.userService.removeAccount(email, password);
+      const { id } = req.params;
+      await this.userService.removeAccount(id);
       res.clearCookie('refreshToken');
       return res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
