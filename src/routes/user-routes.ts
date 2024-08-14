@@ -15,7 +15,7 @@ userRouter.post(
   userController.updateAvatarImage,
 );
 userRouter.get('/:id/getAvatarImage', authMiddleware, userController.getAvatarImage);
-userRouter.delete('/remove', authMiddleware, userController.removeAccount);
+userRouter.delete('/:id/removeAccount', authMiddleware, userController.removeAccount);
 userRouter.put('/changeOnlineStatus', userController.changeOnlineStatus); // TODO maybe need authMiddleware
 
 export default userRouter;
