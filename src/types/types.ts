@@ -64,35 +64,37 @@ export enum WEBSOCKET_EVENTS {
   CONNECTION_ERROR = 'connect_error',
   DISCONNECT = 'disconnect', // * Fired upon disconnection.
   DISCONNECTING = 'disconnecting', // * Fired when the client is going to be disconnected (but hasn't left its rooms yet).
-  JOIN_ROOM = 'join_room',
-  JOINED_ROOM_SUCCESSFULLY = 'joined_room_successfully',
+  CREATE_CHAT = 'create_chat',
+  CREATED_CHAT_SUCCESSFULLY = 'created_chat_successfully',
   LEFT_ROOM_SUCCESSFULLY = 'left_room_successfully',
   LEAVE_ROOM = 'leave_room',
-  CONNECT_PARTICIPANT = 'connect_participant',
-  PARTICIPANT_CONNECTED = 'participant_connected',
-  DISCONNECT_PARTICIPANT = 'disconnect_participant',
-  PARTICIPANT_DISCONNECTED = 'participant_disconnected',
+  CONNECT_USER = 'connect_user',
+  USER_CONNECTED = 'user_connected',
+  DISCONNECT_USER = 'disconnect_user',
+  USER_DISCONNECTED = 'user_disconnected',
 }
 
-interface JoinedRoomSuccessfullyPayload {
+interface CreatedChatSuccessfullyPayload {
   chat: IChat;
   isCreated: boolean;
 }
 
 export interface ServerToClientEvents {
-  socket_successfully_connected: (friendsOnlineStatuses: Record<string, boolean>) => void;
+  socket_successfully_connected: (
+    friendsOnlineStatuses: Record<string, boolean>,
+    chats: IChat[],
+  ) => void;
   socket_successfully_disconnected: () => void;
   receive_message: (message: Message) => void;
   receiver_start_typing: (userId: string) => void;
   receiver_stop_typing: (userId: string) => void;
-  joined_room_successfully: (payload: JoinedRoomSuccessfullyPayload) => void;
+  created_chat_successfully: (payload: CreatedChatSuccessfullyPayload) => void;
   left_room_successfully: () => void;
-  connect_participant: (isReceiverOnline: boolean) => void;
-  participant_connected: (userId: string) => void;
-  participant_disconnected: (userId: string) => void;
+  user_connected: (userId: string) => void;
+  user_disconnected: (userId: string) => void;
 }
 
-export interface JoinRoomPayload {
+export interface CreateChatPayload {
   chatId: string;
   userId: string;
   receiverId: string;
@@ -101,11 +103,11 @@ export interface JoinRoomPayload {
 export interface ClientToServerEvents {
   start_typing: (chatId: string, userId: string) => void;
   stop_typing: (chatId: string, userId: string) => void;
-  join_room: (payload: JoinRoomPayload) => void;
+  create_chat: (payload: CreateChatPayload) => void;
   send_message: (message: Message) => void;
   leave_room: () => void;
-  connect_participant: (userId: string, userName: string) => void;
-  disconnect_participant: (userId: string) => void;
+  connect_user: (userId: string, userName: string) => void;
+  disconnect_user: (userId: string) => void;
 }
 
 export interface Message {
