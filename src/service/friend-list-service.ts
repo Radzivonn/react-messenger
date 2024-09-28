@@ -45,14 +45,15 @@ class FriendListService implements IFriendListService {
 
     if (!friends || (friends && !friends.friendsList.length)) return [];
 
-    const friendsData = User.findAll({
+    const friendsData = await User.findAll({
       where: {
         id: {
           [Op.in]: friends.friendsList,
         },
       },
     });
-    return friendsData;
+
+    return friendsData.map((friend) => new UserDto(friend));
   };
 
   searchUsers = async (userId: string, search: string) => {

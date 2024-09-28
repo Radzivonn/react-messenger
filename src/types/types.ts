@@ -39,7 +39,7 @@ export interface IUserService {
 export interface IFriendListService {
   addFriend: (userId: string, friendId: string) => Promise<FriendsList>;
   removeFriend: (userId: string, friendId: string) => Promise<FriendsList>;
-  getFriends: (userId: string) => Promise<IUserModel[]>;
+  getFriends: (userId: string) => Promise<IUserDTO[]>;
   searchUsers: (userId: string, search: string) => Promise<IUserWithOnlineStatus[]>;
 }
 
