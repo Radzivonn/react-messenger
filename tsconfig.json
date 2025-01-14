@@ -4,7 +4,7 @@
     "module": "NodeNext",
     "lib": ["ES6"],
     "rootDir": "./src",
-    "outDir": "./build",
+    "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -14,8 +14,5 @@
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules"],
-  "lib": ["ESNext"],
-  "ts-node": {
-    "esm": true
-  }
+  "lib": ["ESNext"]
 }
