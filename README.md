@@ -1,27 +1,29 @@
-# React + TypeScript + Vite
+# React Messenger server
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Run dev server
 
-Currently, two official plugins are available:
+`npm run dev` command
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Run build
 
-## Expanding the ESLint configuration
+`npm run build` command
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Start server from dist folder
 
-- Configure the top-level `parserOptions` property like this:
+`npm run start` command
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## To start the server you need .env file with parameters as in the image
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+![alt text](image.png)
+
+- for dev - SERVER_ROOT_DIR=src
+- for build - SERVER_ROOT_DIR=dist
+
+## Stack:
+
+- [Node js](https://nodejs.org/en)
+- [Typescript](https://www.typescriptlang.org/)
+- [Express js](https://expressjs.com/)
+- [Socket.io](https://socket.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Sequelize ORM](https://sequelize.org/)
