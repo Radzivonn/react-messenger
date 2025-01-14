@@ -16,7 +16,7 @@ class FriendListController extends BaseController {
     try {
       const { userId, friendId } = req.body;
       await this.friendListService.addFriend(userId, friendId);
-      return res.status(STATUS_CODES.NO_CONTENT).json();
+      res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -26,7 +26,7 @@ class FriendListController extends BaseController {
     try {
       const { userId, friendId } = req.body;
       await this.friendListService.removeFriend(userId, friendId);
-      return res.status(STATUS_CODES.NO_CONTENT).json();
+      res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -36,7 +36,7 @@ class FriendListController extends BaseController {
     try {
       const { id } = req.params;
       const friendList = await this.friendListService.getFriends(id);
-      return res.json(friendList);
+      res.json(friendList);
     } catch (e) {
       next(e);
     }
@@ -46,7 +46,7 @@ class FriendListController extends BaseController {
     try {
       const { id, search } = req.params;
       const users = await this.friendListService.searchUsers(id, search);
-      return res.json(users);
+      res.json(users);
     } catch (e) {
       next(e);
     }

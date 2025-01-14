@@ -15,7 +15,7 @@ class ChatController extends BaseController {
     try {
       const { id, name } = req.params;
       const userChats = await this.chatService.getUserChats(id, name);
-      return res.json(userChats);
+      res.json(userChats);
     } catch (e) {
       next(e);
     }

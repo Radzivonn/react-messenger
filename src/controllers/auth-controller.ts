@@ -30,7 +30,7 @@ class AuthController extends BaseController {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,
       });
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -44,7 +44,7 @@ class AuthController extends BaseController {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,
       });
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -57,7 +57,7 @@ class AuthController extends BaseController {
       const isLoggedOut = await this.authService.logout(id, refreshToken);
       if (isLoggedOut) {
         res.clearCookie('refreshToken');
-        return res.status(STATUS_CODES.NO_CONTENT).json();
+        res.status(STATUS_CODES.NO_CONTENT).json();
       }
       return next(ApiError.BadRequest('This User has not logged out'));
     } catch (e) {
@@ -73,7 +73,7 @@ class AuthController extends BaseController {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,
       });
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }

@@ -16,7 +16,7 @@ class UserController extends BaseController {
     try {
       const accessToken = req.headers.authorization!.split(' ')[1]; // not undefined because before that auth middleware checked user auth
       const user = this.userService.getUserData(accessToken);
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -43,7 +43,7 @@ class UserController extends BaseController {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,
       });
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -64,7 +64,7 @@ class UserController extends BaseController {
       if (req.file) {
         const { id } = req.params;
         await this.userService.updateAvatarImage(id, req.file.path);
-        return res.status(STATUS_CODES.NO_CONTENT).json();
+        res.status(STATUS_CODES.NO_CONTENT).json();
       }
     } catch (e) {
       next(e);
@@ -81,7 +81,7 @@ class UserController extends BaseController {
         maxAge: this.COOKIES_MAX_AGE,
         httpOnly: true,
       });
-      return res.json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -92,7 +92,7 @@ class UserController extends BaseController {
       const { id } = req.params;
       await this.userService.removeAccount(id);
       res.clearCookie('refreshToken');
-      return res.status(STATUS_CODES.NO_CONTENT).json();
+      res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
@@ -102,7 +102,7 @@ class UserController extends BaseController {
     try {
       const { userId, online } = req.body;
       await this.userService.changeOnlineStatus(userId, online);
-      return res.status(STATUS_CODES.NO_CONTENT).json();
+      res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
     }
