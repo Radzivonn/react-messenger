@@ -4,10 +4,12 @@ import { rm, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { v4 } from 'uuid';
 
+const ROOT_DIR = process.env.SERVER_ROOT_DIR;
+
 const storage = multer.diskStorage({
   async destination(req, file, callback) {
     const { id } = req.params;
-    const userDir = 'src/users-avatars/' + id;
+    const userDir = `${ROOT_DIR}/users-avatars/` + id;
 
     if (existsSync(userDir)) await rm(userDir, { recursive: true, force: true });
     await mkdir(userDir);

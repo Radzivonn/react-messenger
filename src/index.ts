@@ -19,10 +19,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.SERVER_PORT;
+const ROOT_DIR = process.env.SERVER_ROOT_DIR;
 const app = express();
 
 app.use(express.json());
-app.use('/src/users-avatars', express.static(path.join(__dirname, 'users-avatars')));
+app.use(`/${ROOT_DIR}/users-avatars`, express.static(path.join(__dirname, 'users-avatars')));
 app.use(cookieParser());
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use('/auth', authRouter);

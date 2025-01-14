@@ -8,6 +8,8 @@ import { ApiError } from '../exceptions/api-error.js';
 import { Avatar, OnlineStatus, User } from '../models/models.js';
 import { chatService } from './chat-service.js';
 
+const ROOT_DIR = process.env.SERVER_ROOT_DIR;
+
 class UserService implements IUserService {
   getUserData = (accessToken: string) => {
     const userData = tokenService.validateAccessToken(accessToken);
@@ -99,7 +101,7 @@ class UserService implements IUserService {
 
     const avatar = await Avatar.findOne({ where: { userId } });
     if (avatar) {
-      const userDir = 'src/users-avatars/' + userId;
+      const userDir = `${ROOT_DIR}/users-avatars/` + userId;
       if (existsSync(userDir)) await rm(userDir, { recursive: true, force: true });
     }
 
