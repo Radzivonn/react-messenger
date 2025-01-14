@@ -12,10 +12,8 @@
 
 `npm run start` command
 
-## To start the server you need .env file with parameters as in the image
-
-![alt text](image.png)
-
+## To start the server you need .env file outside the source directory with parameters as in the image
+![image](https://github.com/user-attachments/assets/ab171c35-e5e5-421f-9430-506f113ceecd)
 - for dev - SERVER_ROOT_DIR=src
 - for build - SERVER_ROOT_DIR=dist
 
