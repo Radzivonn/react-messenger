@@ -1,12 +1,15 @@
 import 'dotenv/config'; // ???
 import { Sequelize } from 'sequelize';
 
-const DB_NAME = process.env.DB_NAME || 'react_messenger';
-const DB_USER = process.env.DB_USER || 'postgres';
-const PORT = process.env.DB_PORT || 5432;
+const DATABASE_URL = process.env.DATABASE_URL || '';
 
-export const sequelize = new Sequelize(DB_NAME, DB_USER, process.env.DB_PASSWORD, {
+export const sequelize = new Sequelize(DATABASE_URL, {
   dialect: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(PORT),
+  protocol: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
 });
