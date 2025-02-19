@@ -60,7 +60,7 @@ class UserService implements IUserService {
     const file = await Avatar.findOne({ where: { userId } });
 
     if (!file || !file.avatarPath) {
-      throw ApiError.NotFoundError('This avatar was not found');
+      return null;
     }
 
     return file.avatarPath;

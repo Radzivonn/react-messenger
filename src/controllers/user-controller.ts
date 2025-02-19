@@ -53,7 +53,8 @@ class UserController extends BaseController {
     try {
       const { id } = req.params;
       const avatarPath = await this.userService.getAvatarImage(id);
-      res.json({ avatarPath });
+      if (!avatarPath) res.status(STATUS_CODES.NO_CONTENT).json();
+      else res.json({ avatarPath });
     } catch (e) {
       next(e);
     }

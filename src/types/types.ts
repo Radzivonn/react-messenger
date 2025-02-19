@@ -30,7 +30,7 @@ export interface IUserService {
     newPassword: string,
   ) => Promise<IUserAuthResponse>;
   updateAvatarImage: (userId: string, avatarPath: string) => Promise<[affectedCount: number]>;
-  getAvatarImage: (userId: string) => Promise<string>;
+  getAvatarImage: (userId: string) => Promise<string | null>;
   updateUserName: (email: string, newName: string) => Promise<IUserAuthResponse>;
   removeAccount: (userId: string) => Promise<void>;
   changeOnlineStatus: (userId: string, online: boolean) => Promise<[affectedCount: number]>;
