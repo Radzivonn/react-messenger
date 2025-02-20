@@ -44,11 +44,8 @@ class AuthService implements IAuthService {
     return this.getUserDTOWithTokens(user);
   };
 
-  logout = async (userId: string, refreshToken: string) => {
-    if (!refreshToken) {
-      throw ApiError.UnauthenticatedError();
-    }
-    const isRemoved = tokenService.removeToken(userId, refreshToken);
+  logout = async (userId: string) => {
+    const isRemoved = tokenService.removeToken(userId);
     return isRemoved;
   };
 

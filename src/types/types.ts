@@ -16,7 +16,7 @@ export interface IAuthService {
     role?: string,
   ) => Promise<IUserAuthResponse>;
   login: (email: string, password: string) => Promise<IUserAuthResponse>;
-  logout: (userId: string, refreshToken: string) => Promise<boolean>;
+  logout: (userId: string) => Promise<boolean>;
   refresh: (refreshToken: string) => Promise<IUserAuthResponse>;
 }
 

@@ -39,10 +39,7 @@ class UserController extends BaseController {
         newPassword,
       );
 
-      res.cookie('refreshToken', user.refreshToken, {
-        maxAge: this.COOKIES_MAX_AGE,
-        httpOnly: true,
-      });
+      res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
       res.json(user);
     } catch (e) {
       next(e);
@@ -78,10 +75,7 @@ class UserController extends BaseController {
 
       const user = await this.userService.updateUserName(id, name);
 
-      res.cookie('refreshToken', user.refreshToken, {
-        maxAge: this.COOKIES_MAX_AGE,
-        httpOnly: true,
-      });
+      res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
       res.json(user);
     } catch (e) {
       next(e);

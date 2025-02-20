@@ -12,6 +12,7 @@ dist
 dist-ssr
 tests
 *.local
+ssl
 
 # Editor directories and files
 .vscode/*

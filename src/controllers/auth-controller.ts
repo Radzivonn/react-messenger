@@ -23,13 +23,9 @@ class AuthController extends BaseController {
       if (!errors.isEmpty()) {
         return next(ApiError.BadRequest('Validation error', errors.array()));
       }
-
       const { name, email, password } = req.body;
       const user = await this.authService.registration(name, email, password);
-      res.cookie('refreshToken', user.refreshToken, {
-        maxAge: this.COOKIES_MAX_AGE,
-        httpOnly: true,
-      });
+      res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
       res.json(user);
     } catch (e) {
       next(e);
@@ -40,10 +36,7 @@ class AuthController extends BaseController {
     try {
       const { email, password } = req.body;
       const user = await this.authService.login(email, password);
-      res.cookie('refreshToken', user.refreshToken, {
-        maxAge: this.COOKIES_MAX_AGE,
-        httpOnly: true,
-      });
+      res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
       res.json(user);
     } catch (e) {
       next(e);
@@ -53,8 +46,7 @@ class AuthController extends BaseController {
   logout: RequestHandler = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { refreshToken } = req.cookies; // TODO typing refreshToken
-      const isLoggedOut = await this.authService.logout(id, refreshToken);
+      const isLoggedOut = await this.authService.logout(id);
       if (isLoggedOut) {
         res.clearCookie('refreshToken');
         res.status(STATUS_CODES.NO_CONTENT).json();
@@ -69,10 +61,7 @@ class AuthController extends BaseController {
     try {
       const { refreshToken } = req.cookies; // TODO typing refreshToken
       const user = await this.authService.refresh(refreshToken);
-      res.cookie('refreshToken', user.refreshToken, {
-        maxAge: this.COOKIES_MAX_AGE,
-        httpOnly: true,
-      });
+      res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
       res.json(user);
     } catch (e) {
       next(e);

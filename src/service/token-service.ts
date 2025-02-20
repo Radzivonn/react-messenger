@@ -13,8 +13,8 @@ class TokenService {
       throw new Error('JWT secret does not exist');
     }
 
-    const accessToken = sign(payload, JWT_ACCESS_SECRET, { expiresIn: '12h' });
-    const refreshToken = sign(payload, JWT_REFRESH_SECRET, { expiresIn: '24h' });
+    const accessToken = sign(payload, JWT_ACCESS_SECRET, { expiresIn: '8h' });
+    const refreshToken = sign(payload, JWT_REFRESH_SECRET, { expiresIn: '72h' });
     return {
       accessToken,
       refreshToken,
@@ -59,8 +59,8 @@ class TokenService {
     return token;
   };
 
-  removeToken = async (userId: string, refreshToken: string) => {
-    const isRemoved = Boolean(await Token.destroy({ where: { userId, refreshToken } }));
+  removeToken = async (userId: string) => {
+    const isRemoved = Boolean(await Token.destroy({ where: { userId } }));
     return isRemoved;
   };
 
