@@ -6,7 +6,7 @@ class BaseController {
     maxAge: this.COOKIES_MAX_AGE,
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
   };
 }
 

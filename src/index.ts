@@ -1,5 +1,6 @@
 import express from 'express';
-import { createServer } from 'https';
+import http from 'http';
+import https from 'https';
 import path from 'path';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -36,29 +37,55 @@ app.use('/user', userRouter);
 app.use('/friends', friendListRouter);
 app.use('/chat', chatRouter);
 
-const options = {
-  key: readFileSync(path.join(__dirname, 'ssl', 'key.pem')),
-  cert: readFileSync(path.join(__dirname, 'ssl', 'cert.pem')),
-};
+const isProduction = process.env.NODE_ENV === 'production';
 
-const httpsServer = createServer(options, app);
+if (isProduction) {
+  const httpServer = http.createServer(app);
 
-const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpsServer, {
-  cors: {
-    origin: `${CORS_URL}`,
-    credentials: true,
-  },
-});
+  const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
+    cors: {
+      origin: `${CORS_URL}`,
+      credentials: true,
+    },
+  });
 
-const start = async () => {
-  try {
-    await sequelize.authenticate();
-    await sequelize.sync();
-    console.log('database connected');
-    startSocketServer(io);
-    console.log('Socket server started');
-    httpsServer.listen(PORT, () => console.log(`server started on ${PORT} port`));
-  } catch (e) {}
-};
+  const start = async () => {
+    try {
+      await sequelize.authenticate();
+      await sequelize.sync();
+      console.log('database connected');
+      startSocketServer(io);
+      console.log('Socket server started');
+      httpServer.listen(PORT, () => console.log(`server started on ${PORT} port`));
+    } catch (e) {}
+  };
 
-start();
+  start();
+} else {
+  const options = {
+    key: readFileSync(path.join(__dirname, 'ssl', 'key.pem')),
+    cert: readFileSync(path.join(__dirname, 'ssl', 'cert.pem')),
+  };
+
+  const httpsServer = https.createServer(options, app);
+
+  const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpsServer, {
+    cors: {
+      origin: `${CORS_URL}`,
+      credentials: true,
+    },
+  });
+
+  const start = async () => {
+    try {
+      await sequelize.authenticate();
+      await sequelize.sync();
+      console.log('database connected');
+      startSocketServer(io);
+      console.log('Socket server started');
+      httpsServer.listen(PORT, () => console.log(`server started on ${PORT} port`));
+    } catch (e) {}
+  };
+
+  start();
+}
