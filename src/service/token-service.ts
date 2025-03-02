@@ -1,10 +1,22 @@
 import 'dotenv/config';
-import { ITokens, IUserDTO } from '../types/types.js';
+import { ITokens, IUserDTO, IUserModel } from '../types/types.js';
 import jwt from 'jsonwebtoken';
 const { sign, verify } = jwt;
 import { Token } from '../models/models.js';
+import { UserDto } from '../dtos/user-dto.js';
 
 class TokenService {
+  getUserDTOWithTokens = async (user: IUserModel) => {
+    const userDto = new UserDto(user);
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
+  };
+
   generateTokens = (payload: IUserDTO): ITokens => {
     const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
     const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;

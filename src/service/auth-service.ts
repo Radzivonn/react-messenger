@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import { IAuthService, IUserAuthResponse, IUserModel } from '../types/types.js';
-import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';
 import { Avatar, OnlineStatus, User } from '../models/models.js';
@@ -26,7 +25,7 @@ class AuthService implements IAuthService {
     await OnlineStatus.create({ userId: randomId, online: false });
     await Avatar.create({ userId: randomId, avatarPath: null });
 
-    return this.getUserDTOWithTokens(user);
+    return tokenService.getUserDTOWithTokens(user);
   };
 
   login = async (email: string, password: string): Promise<IUserAuthResponse> => {
@@ -41,7 +40,7 @@ class AuthService implements IAuthService {
       throw ApiError.BadRequest('Incorrect password');
     }
 
-    return this.getUserDTOWithTokens(user);
+    return tokenService.getUserDTOWithTokens(user);
   };
 
   logout = async (userId: string) => {
@@ -66,18 +65,7 @@ class AuthService implements IAuthService {
       throw ApiError.NotFoundError('This user was not found');
     }
 
-    return this.getUserDTOWithTokens(user);
-  };
-
-  private getUserDTOWithTokens = async (user: IUserModel) => {
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user: userDto,
-    };
+    return tokenService.getUserDTOWithTokens(user);
   };
 }
 
