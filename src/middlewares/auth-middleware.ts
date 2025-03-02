@@ -1,16 +1,12 @@
 import { RequestHandler } from 'express';
 import { ApiError } from '../exceptions/api-error.js';
 import { tokenService } from '../service/token-service.js';
+import { JWTCookies } from '../types/types.js';
 
 export const authMiddleware: RequestHandler = (req, res, next) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-    if (!authorizationHeader) {
-      return next(ApiError.UnauthorizedError());
-    }
-
-    const accessToken = authorizationHeader.split(' ')[1];
-    if (!accessToken) {
+    const { accessToken } = req.cookies as JWTCookies;
+    if (!accessToken || typeof accessToken !== 'string') {
       return next(ApiError.UnauthorizedError());
     }
 

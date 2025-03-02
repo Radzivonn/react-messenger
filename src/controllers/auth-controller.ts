@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { IAuthService, IUser, STATUS_CODES } from '../types/types.js';
+import { IAuthService, IUser, JWTCookies, STATUS_CODES } from '../types/types.js';
 import { ApiError } from '../exceptions/api-error.js';
 import { validationResult } from 'express-validator';
 import { authService } from '../service/auth-service.js';
@@ -25,8 +25,9 @@ class AuthController extends BaseController {
       }
       const { name, email, password } = req.body;
       const user = await this.authService.registration(name, email, password);
+      res.cookie('accessToken', user.accessToken, this.COOKIES_OPTIONS);
       res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
-      res.json(user);
+      res.json(user.user);
     } catch (e) {
       next(e);
     }
@@ -36,8 +37,9 @@ class AuthController extends BaseController {
     try {
       const { email, password } = req.body;
       const user = await this.authService.login(email, password);
+      res.cookie('accessToken', user.accessToken, this.COOKIES_OPTIONS);
       res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
-      res.json(user);
+      res.json(user.user);
     } catch (e) {
       next(e);
     }
@@ -48,10 +50,12 @@ class AuthController extends BaseController {
       const { id } = req.params;
       const isLoggedOut = await this.authService.logout(id);
       if (isLoggedOut) {
+        res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
         res.status(STATUS_CODES.NO_CONTENT).json();
+      } else {
+        return next(ApiError.BadRequest('This User has not logged out'));
       }
-      return next(ApiError.BadRequest('This User has not logged out'));
     } catch (e) {
       next(e);
     }
@@ -59,10 +63,11 @@ class AuthController extends BaseController {
 
   refresh: RequestHandler = async (req, res, next) => {
     try {
-      const { refreshToken } = req.cookies; // TODO typing refreshToken
+      const { refreshToken } = req.cookies as JWTCookies;
       const user = await this.authService.refresh(refreshToken);
+      res.cookie('accessToken', user.accessToken, this.COOKIES_OPTIONS);
       res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
-      res.json(user);
+      res.json(user.user);
     } catch (e) {
       next(e);
     }

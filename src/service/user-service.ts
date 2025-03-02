@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt';
 import { rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { IChatModel, IUserAuthResponse, IUserModel, IUserService } from '../types/types.js';
+import {
+  IChatModel,
+  IUserAuthResponse,
+  IUserDTO,
+  IUserModel,
+  IUserService,
+} from '../types/types.js';
 import { UserDto } from '../dtos/user-dto.js';
 import { tokenService } from './token-service.js';
 import { ApiError } from '../exceptions/api-error.js';

@@ -1,5 +1,10 @@
 import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
 
+export interface JWTCookies {
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 export enum STATUS_CODES {
   NO_CONTENT = 204,
   BAD_REQUEST = 400,
@@ -17,7 +22,7 @@ export interface IAuthService {
   ) => Promise<IUserAuthResponse>;
   login: (email: string, password: string) => Promise<IUserAuthResponse>;
   logout: (userId: string) => Promise<boolean>;
-  refresh: (refreshToken: string) => Promise<IUserAuthResponse>;
+  refresh: (refreshToken: string | undefined) => Promise<IUserAuthResponse>;
 }
 
 export interface IUserService {

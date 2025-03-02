@@ -49,7 +49,7 @@ class AuthService implements IAuthService {
     return isRemoved;
   };
 
-  refresh = async (refreshToken: string): Promise<IUserAuthResponse> => {
+  refresh = async (refreshToken: string | undefined): Promise<IUserAuthResponse> => {
     if (!refreshToken) {
       throw ApiError.UnauthenticatedError();
     }

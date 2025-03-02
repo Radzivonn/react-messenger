@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { IUpdateUserHandlerReqBody } from './types.js';
-import { IOnlineStatus, IUser, IUserService, STATUS_CODES } from '../types/types.js';
+import { IOnlineStatus, IUser, IUserService, JWTCookies, STATUS_CODES } from '../types/types.js';
 import { userService } from '../service/user-service.js';
 import BaseController from './base-controller.js';
 
@@ -14,8 +14,8 @@ class UserController extends BaseController {
 
   getUserData: RequestHandler = (req, res, next) => {
     try {
-      const accessToken = req.headers.authorization!.split(' ')[1]; // not undefined because before that auth middleware checked user auth
-      const user = this.userService.getUserData(accessToken);
+      const { accessToken } = req.cookies as JWTCookies;
+      const user = this.userService.getUserData(accessToken!); // accessToken is NOT undefined because of auth middleware
       res.json(user);
     } catch (e) {
       next(e);
@@ -39,8 +39,9 @@ class UserController extends BaseController {
         newPassword,
       );
 
+      res.cookie('accessToken', user.accessToken, this.COOKIES_OPTIONS);
       res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
-      res.json(user);
+      res.json(user.user);
     } catch (e) {
       next(e);
     }
@@ -75,8 +76,9 @@ class UserController extends BaseController {
 
       const user = await this.userService.updateUserName(id, name);
 
+      res.cookie('accessToken', user.accessToken, this.COOKIES_OPTIONS);
       res.cookie('refreshToken', user.refreshToken, this.COOKIES_OPTIONS);
-      res.json(user);
+      res.json(user.user);
     } catch (e) {
       next(e);
     }
@@ -86,6 +88,7 @@ class UserController extends BaseController {
     try {
       const { id } = req.params;
       await this.userService.removeAccount(id);
+      res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
       res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
