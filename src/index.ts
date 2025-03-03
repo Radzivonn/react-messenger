@@ -30,12 +30,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: `${CORS_URL}`, credentials: true }));
 app.use(CORPmiddleware);
-app.use(errorMiddleware);
 app.use(`/${ROOT_DIR}/users-avatars`, express.static(path.join(__dirname, 'users-avatars')));
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/friends', friendListRouter);
 app.use('/chat', chatRouter);
+app.use(errorMiddleware);
 
 const isProduction = process.env.NODE_ENV === 'production';
 

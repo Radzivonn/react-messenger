@@ -7,9 +7,9 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(err);
+  if (process.env.NODE_ENV === 'development') console.log(err);
   if (err instanceof ApiError) {
-    res.status(err.status).json({ message: err.message, errors: err.errors });
+    return res.status(err.status).json({ message: err.message, errors: err.errors });
   }
-  res.status(500).json({ message: 'Unexpected error' });
+  return res.status(500).json({ message: 'Unexpected error' });
 };
