@@ -50,8 +50,8 @@ class AuthController extends BaseController {
       const { id } = req.params;
       const isLoggedOut = await this.authService.logout(id);
       if (isLoggedOut) {
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('accessToken', this.COOKIES_OPTIONS);
+        res.clearCookie('refreshToken', this.COOKIES_OPTIONS);
         res.status(STATUS_CODES.NO_CONTENT).json();
       } else {
         return next(ApiError.BadRequest('This User has not logged out'));

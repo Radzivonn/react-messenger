@@ -88,8 +88,8 @@ class UserController extends BaseController {
     try {
       const { id } = req.params;
       await this.userService.removeAccount(id);
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+      res.clearCookie('accessToken', this.COOKIES_OPTIONS);
+      res.clearCookie('refreshToken', this.COOKIES_OPTIONS);
       res.status(STATUS_CODES.NO_CONTENT).json();
     } catch (e) {
       next(e);
